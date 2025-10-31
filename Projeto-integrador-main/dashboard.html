@@ -1,0 +1,246 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestão de EPIs - Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="branding-area">
+                <div class="logo-container">
+                    <i class="fas fa-hard-hat"></i> 
+                </div>
+                <div>
+                    <h1>Gestão de EPIs</h1>
+                    <p class="subtitle">Sistema de Gerenciamento de Segurança Industrial</p>
+                </div>
+            </div>
+        </header>
+
+        <div class="tabs">
+            <button class="tab active" onclick="setActiveTab('epis')">
+                <i class="fas fa-shield-alt"></i> EPIs
+            </button>
+            <button class="tab" onclick="setActiveTab('entregas')">
+                <i class="fas fa-hand-holding"></i> Entregas
+            </button>
+            <button class="tab" onclick="setActiveTab('relatorios')">
+                <i class="fas fa-chart-bar"></i> Relatórios
+            </button>
+            <button class="tab logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Sair
+            </button>
+        </div>
+
+        <div id="message-area" style="display: none;"></div>
+
+        <div id="epis-section" style="display: block;">
+            <div class="card form-card">
+                <h2 class="card-title"><i class="fas fa-plus-circle"></i> Cadastrar/Editar EPI</h2>
+                <form id="epi-form">
+                    <input type="hidden" id="epi-id">
+                    
+                    <div class="input-group">
+                        <label for="nome">Nome do EPI</label>
+                        <input type="text" id="nome" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="categoria">Categoria</label>
+                        <select id="categoria" required>
+                            <option value="">Selecione a Categoria</option>
+                            <option value="Capacete">Capacete</option>
+                            <option value="Luva">Luva</option>
+                            <option value="Bota">Bota</option>
+                            <option value="Óculos">Óculos</option>
+                            <option value="Protetor Auditivo">Protetor Auditivo</option>
+                            <option value="Máscara">Máscara/Respirador</option>
+                            <option value="Cinto de Segurança">Cinto de Segurança</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="ca">CA (Certificado de Aprovação)</label>
+                        <input type="text" id="ca" maxlength="6" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="estoque">Estoque Atual</label>
+                        <input type="number" id="estoque" min="0" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="minimo">Estoque Mínimo</label>
+                        <input type="number" id="minimo" min="0" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="validade">Validade do CA/Lote</label>
+                        <input type="date" id="validade" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="fornecedor">Fornecedor</label>
+                        <input type="text" id="fornecedor">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="localizacao">Localização no Estoque</label>
+                        <input type="text" id="localizacao">
+                    </div>
+                    
+                    <div class="input-group" style="grid-column: 1 / -1;">
+                        <label for="observacoes">Observações Adicionais</label>
+                        <textarea id="observacoes"></textarea>
+                    </div>
+
+                    <div class="input-group" style="grid-column: 1 / -1;">
+                        <button type="submit" class="btn btn-primary" id="epi-submit-btn"><i class="fas fa-save"></i> Salvar EPI</button>
+                        <button type="button" class="btn btn-secondary" id="cancel-edit-btn" style="display: none;" onclick="resetForm()"><i class="fas fa-times"></i> Cancelar Edição</button>
+                        <button type="button" class="btn btn-secondary" onclick="exportEPIsToCSV()"><i class="fas fa-file-csv"></i> Exportar EPIs (CSV)</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-list-alt"></i> Lista de EPIs Cadastrados</h2>
+                <div id="loading" class="loading" style="display: none;">Carregando EPIs...</div>
+                <div id="epis-container" class="epis-grid">
+                    </div>
+            </div>
+        </div>
+
+        <div id="entregas-section" style="display: none;">
+            <div class="card form-card">
+                <h2 class="card-title"><i class="fas fa-truck-loading"></i> Registrar Entrega de EPI</h2>
+                <form id="entrega-form">
+                    <div class="input-group">
+                        <label for="epi-select">EPI</label>
+                        <select id="epi-select" required>
+                            <option value="">Selecione um EPI (com estoque disponível)</option>
+                        </select>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="quantidade-entrega">Quantidade</label>
+                        <input type="number" id="quantidade-entrega" min="1" required>
+                    </div>
+
+                    <div class="input-group">
+                        <label for="colaborador">Colaborador (Nome ou Matrícula)</label>
+                        <input type="text" id="colaborador" required>
+                    </div>
+                    
+                    <div class="input-group">
+                        <label for="data-entrega">Data da Entrega</label>
+                        <input type="date" id="data-entrega" required>
+                    </div>
+
+                    <div class="input-group" style="grid-column: 1 / -1;">
+                        <label for="observacoes-entrega">Observações (Motivo, etc.)</label>
+                        <textarea id="observacoes-entrega"></textarea>
+                    </div>
+
+                    <div class="input-group" style="grid-column: 1 / -1;">
+                        <button type="submit" class="btn btn-primary"><i class="fas fa-clipboard-check"></i> Confirmar Entrega</button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-history"></i> Histórico de Entregas</h2>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="exportEntregasToCSV()" style="margin-bottom: 20px;"><i class="fas fa-file-csv"></i> Exportar Entregas (CSV)</button>
+                <div id="entregas-container" class="entregas-list">
+                    </div>
+            </div>
+        </div>
+
+        <div id="relatorios-section" style="display: none;">
+            <div class="card">
+                <h2 class="card-title"><i class="fas fa-chart-bar"></i> Relatórios e Estatísticas</h2>
+                <div class="stats-grid">
+                    <div class="stat-card" style="background: linear-gradient(135deg, #007bff 0%, #00bfff 100%);">
+                        <i class="fas fa-shield-alt"></i>
+                        <h3 id="total-epis-count">0</h3>
+                        <p>Tipos de EPIs Cadastrados</p>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #ffc107 0%, #ff9800 100%);">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <h3 id="criticos-count">0</h3>
+                        <p>EPIs em Estoque Crítico/Falta</p>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #28a745 0%, #20c997 100%);">
+                        <i class="fas fa-clipboard-list"></i>
+                        <h3 id="entregas-count">0</h3>
+                        <p>Registros de Entregas</p>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #ffa726 0%, #fb8c00 100%);">
+                        <i class="fas fa-truck-loading"></i>
+                        <h3 id="unidades-entregues-count">0</h3>
+                        <p>Unidades Entregues no Total</p>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #1e90ff 0%, #00bfff 100%);">
+                        <i class="fas fa-users"></i>
+                        <h3 id="colaboradores-count">0</h3>
+                        <p>Colaboradores Atendidos</p>
+                    </div>
+                    <div class="stat-card" style="background: linear-gradient(135deg, #dc3545 0%, #ff4500 100%);">
+                        <i class="fas fa-calendar-times"></i>
+                        <h3 id="vencidos-count">0</h3>
+                        <p>EPIs Vencidos</p>
+                    </div>
+                </div>
+
+                <div class="card" style="border-left: 5px solid #4CAF50; margin-top: 30px;">
+                    <h4 class="card-title" style="color: #4CAF50;"><i class="fas fa-leaf"></i> Módulo de Sustentabilidade</h4>
+                    <div class="stats-grid" style="grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));">
+                         <div class="stat-card" style="background: linear-gradient(135deg, #4CAF50 0%, #8BC34A 100%);">
+                            <i class="fas fa-trash-alt"></i>
+                            <h3 id="impacto-residuos">0 kg</h3>
+                            <p>Resíduos Sólidos Evitados</p>
+                        </div>
+                        <div class="stat-card" style="background: linear-gradient(135deg, #00BCD4 0%, #03A9F4 100%);">
+                            <i class="fas fa-cloud"></i>
+                            <h3 id="impacto-co2">0 kg</h3>
+                            <p>Emissão de CO₂ Evitada</p>
+                        </div>
+                    </div>
+                    
+                    <div id="descarte-sustentavel-area" style="margin-top: 30px; padding: 20px; border: 1px dashed #4CAF50; border-radius: 8px;">
+                        <h5 style="color: #4CAF50; margin-bottom: 15px;"><i class="fas fa-recycle"></i> Gestão de Fim de Vida (EPIs Vencidos)</h5>
+                        <div id="alerta-descarte" class="alert" style="display: none;"></div>
+                        
+                        <p style="font-size: 0.9rem; color: #666;">
+                            O sistema identifica EPIs próximos ao vencimento e os materiais predominantes para realizar o descarte sustentável e a venda dos recicláveis, classificando a empresa como sustentável.
+                            Abaixo, listamos os parceiros adequados (por material) para os itens que precisam ser descartados nos próximos 6 meses:
+                        </p>
+                        
+                        <ul id="parceiros-descarte-list" style="margin-top: 15px; list-style-type: none; padding-left: 0px;">
+                            <li>Nenhum EPI em fase de descarte.</li>
+                        </ul>
+                    </div>
+
+
+                    <div style="margin-top: 30px; text-align: center;">
+                        <canvas id="graficoSustentavel" style="max-width: 450px; margin: 0 auto;"></canvas>
+                        <p style="margin-top: 15px; font-style: italic;">Representação do impacto ambiental positivo alcançado pela gestão eficiente (Resíduos e CO₂ Evitados).</p>
+                    </div>
+                </div>
+                
+                <div id="relatorios-container" style="margin-top: 20px;">
+                    <p>Carregando resumo executivo...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="scripts.js"></script>
+</body>
+</html>
