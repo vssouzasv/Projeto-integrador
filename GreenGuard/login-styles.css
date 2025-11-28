@@ -1,0 +1,265 @@
+:root {
+    /* PALETA ORGÂNICA E SOFISTICADA */
+    --primary-color: #4CAF50; /* Verde Esmeralda/Natureza (Botões principais) */
+    --success-color: #2E7D32; /* Verde Floresta Escuro (Botão Cadastrar - forte) */
+    --danger-color: #C62828; /* Vermelho Bordô (Alerta de erro) */
+    
+    --text-color: #333;
+    --background-color: #F9FBE7; /* Creme Suave/Quase Branco - Base orgânica */
+    --box-background: #ffffff;
+    --border-color: #D5D5D5; /* Borda um pouco mais neutra */
+    
+    --shadow-light: 0 4px 15px rgba(0, 0, 0, 0.1);
+    --shadow-hover: 0 8px 30px rgba(0, 0, 0, 0.15);
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: var(--background-color);
+    color: var(--text-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 20px;
+}
+
+/* 2. Container Principal */
+.login-container {
+    width: 100%;
+    max-width: 400px;
+}
+
+/* 3. Caixa de Login/Cadastro */
+.login-box {
+    background-color: var(--box-background);
+    padding: 40px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-light);
+    transition: all 0.3s ease;
+}
+
+.login-box:hover {
+    box-shadow: var(--shadow-hover);
+}
+
+/* 4. Seção do Logo */
+.logo-section {
+    text-align: center;
+    margin-bottom: 30px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #eee;
+}
+
+.logo-section i {
+    font-size: 3rem;
+    color: var(--primary-color); /* Usando o verde orgânico */
+    margin-bottom: 10px;
+}
+
+.logo-section h1 {
+    font-size: 1.8rem;
+    margin-bottom: 5px;
+    color: #2c3e50; /* Cor de texto escuro */
+}
+
+.logo-section p {
+    font-size: 0.9rem;
+    color: #7f8c8d;
+}
+
+/* 5. Estilos do Formulário */
+.auth-form h2 {
+    text-align: center;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    color: var(--primary-color);
+}
+
+.auth-form h2 i {
+    margin-right: 10px;
+}
+
+/* 6. Grupo de Input (Campo + Ícone + Botão) */
+.input-group {
+    position: relative;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    border: 1px solid var(--border-color);
+    border-radius: 8px;
+    padding: 0 10px;
+    transition: border-color 0.3s;
+}
+
+.input-group:focus-within {
+    border-color: var(--primary-color);
+    /* Ajuste para usar a cor primária orgânica: #4CAF50 */
+    box-shadow: 0 0 0 3px rgba(76, 175, 80, 0.25); 
+}
+
+.input-group i {
+    color: #7f8c8d;
+    font-size: 1rem;
+    margin-right: 10px;
+}
+
+.input-group input {
+    flex-grow: 1;
+    border: none;
+    padding: 12px 0;
+    font-size: 1rem;
+    outline: none;
+    background: transparent;
+}
+
+/* Esconder a seta de password do IE */
+.input-group input::-ms-reveal,
+.input-group input::-ms-clear {
+    display: none;
+}
+
+.toggle-password {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0 5px;
+    color: #7f8c8d;
+    transition: color 0.2s;
+}
+
+.toggle-password:hover {
+    color: var(--primary-color);
+}
+
+/* 7. Botões */
+.btn {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s, transform 0.1s;
+    margin-top: 10px;
+}
+
+.btn i {
+    margin-right: 8px;
+}
+
+.btn-primary {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #388E3C; /* Verde mais escuro no hover */
+}
+
+.btn-success {
+    background-color: var(--success-color); /* Verde Floresta Escuro */
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #1B5E20; /* Verde Floresta ainda mais escuro no hover */
+}
+
+/* 8. Troca de Formulário */
+.switch-form {
+    text-align: center;
+    margin-top: 20px;
+    font-size: 0.9rem;
+}
+
+.switch-form a {
+    color: var(--primary-color);
+    text-decoration: none;
+    font-weight: bold;
+    transition: color 0.2s;
+}
+
+.switch-form a:hover {
+    color: #388E3C; /* Verde mais escuro no hover */
+    text-decoration: underline;
+}
+
+/* 9. Área de Mensagens (Sucesso/Erro) */
+#message-area {
+    margin-bottom: 20px;
+    padding: 10px;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: bold;
+    display: none; /* Inicialmente escondido, será exibido via JS */
+}
+
+.message-success {
+    /* Base ajustada para a cor de sucesso Orgânico */
+    background-color: #E6F3E6; 
+    color: var(--success-color);
+    border: 1px solid var(--success-color);
+}
+
+.message-error {
+    /* Base ajustada para a cor de perigo Bordô */
+    background-color: #FBEAEA;
+    color: var(--danger-color);
+    border: 1px solid var(--danger-color);
+}
+
+/* 10. Responsividade */
+@media (max-width: 480px) {
+    .login-box {
+        padding: 30px 20px;
+        margin: 0 10px;
+    }
+    
+    .logo-section h1 {
+        font-size: 1.6rem;
+    }
+
+    .logo-section p {
+        font-size: 0.85rem;
+    }
+
+    .btn {
+        font-size: 1rem;
+        padding: 10px;
+    }
+}
+/* Alertas - ADICIONE ISSO */
+.alert {
+    padding: 12px 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-weight: 600;
+    text-align: center;
+    border: 1px solid transparent;
+}
+
+.alert-success {
+    background-color: #E6F3E6;
+    color: #2E7D32;
+    border-color: #2E7D32;
+}
+
+.alert-error {
+    background-color: #FBEAEA;
+    color: #C62828;
+    border-color: #C62828;
+}
+
+.alert-warning {
+    background-color: #fff3cd;
+    color: #856404;
+    border-color: #ffeaa7;
+}
