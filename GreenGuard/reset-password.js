@@ -66,7 +66,7 @@ async function handleResetPassword(event) {
 
         showMessage('Senha redefinida com sucesso! Redirecionando para o login...', 'success');
         setTimeout(() => {
-            window.location.href = 'login.html';
+            window.location.href = 'index.html';
         }, 2000);
 
     } catch (error) {

@@ -198,7 +198,7 @@ document.addEventListener('DOMContentLoaded', async function() {
 function redirectToLogin() {
     console.log('🔀 Redirecionando para login...');
     setTimeout(() => {
-        window.location.href = 'login.html';
+        window.location.href = 'index.html';
     }, 1000);
 }
 
@@ -366,7 +366,7 @@ async function logout() {
         
         showMessage('Saindo do sistema...', 'success');
         setTimeout(() => {
-            window.location.href = 'login.html';
+            window.location.href = 'index.html';
         }, 1000);
     } catch (error) {
         console.error('Erro ao sair:', error);
